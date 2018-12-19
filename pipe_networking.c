@@ -42,7 +42,7 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
     mkfifo("ipepay",0644);
-    if(!errno){
+    if(errno){
         puts("Failure in creating pipe");
         return 0;
     }
