@@ -13,6 +13,7 @@
 int server_handshake(int *to_client) {
     if(mkfifo("Gandalf",0644)){
         puts("Failure in creating pipe");
+        puts(strerror(errno));
         return 0;
     }
     puts("Server establishing connection to client");
