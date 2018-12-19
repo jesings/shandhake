@@ -18,9 +18,8 @@ int server_handshake(int *to_client) {
     }
     puts("Server establishing connection to client");
     *to_client = open("Gandalf",O_RDONLY);
-    if(!*to_client) puts("Didn't open pipe correctly");
     char* pipename;
-    if(read(*to_client,pipename,HANDSHAKE_BUFFER_SIZE)) puts("Didn't read from pipe correctly");
+    read(*to_client,pipename,HANDSHAKE_BUFFER_SIZE);
     puts("Server recieved private pipe name");
     close(*to_client);
     remove("Gandalf");
@@ -51,11 +50,10 @@ int client_handshake(int *to_server) {
         return 0;
     }
     int wrfd = open("Gandalf",O_WRONLY);
-    if(!wrfd) puts("Didn't open pipe correctly");
     puts("Connection established");
     char* ackbuff = "ipepay";
     puts("Client giving private pipe name to server");
-    if(write(wrfd,ackbuff,HANDSHAKE_BUFFER_SIZE)) puts("Didn't write to pipe correctly");;
+    write(wrfd,ackbuff,HANDSHAKE_BUFFER_SIZE);
     puts("Client establishing a connection with server");
     *to_server =  open("ipepay",O_RDONLY);
     char* ackwait;
