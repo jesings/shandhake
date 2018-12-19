@@ -44,7 +44,7 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
     char pid[10];
-    asprintf(&pid,"%d",getpid());
+    sprintf(&pid,"%d",getpid());
     mkfifo(pid,0644);
     if(errno){
         puts("Failure in creating pipe");
