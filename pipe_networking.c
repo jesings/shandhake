@@ -12,7 +12,10 @@
   =========================*/
 int server_handshake(int *to_client) {
     mkfifo("Gandalf",0644);
-    puts(strerror(errno));
+    if(errno){
+        puts("Failure in creating pipe");
+        return 0;
+    }
     puts("Server establishing connection to client");
     *to_client = open("Gandalf",O_RDONLY);
     char* pipename;
@@ -38,6 +41,10 @@ int server_handshake(int *to_client) {
   =========================*/
 int client_handshake(int *to_server) {
     mkfifo("ipepay",0644);
+    if(errno){
+        puts("Failure in creating pipe");
+        return 0;
+    }
     int wrfd = open("Gandalf",O_WRONLY);
     puts("Connection established");
     char* ackbuff = "ipepay";
