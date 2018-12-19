@@ -22,6 +22,8 @@ int server_handshake(int *to_client) {
     char* pipename;
     if(read(*to_client,pipename,HANDSHAKE_BUFFER_SIZE)) puts("Didn't read from pipe correctly");
     puts("Server recieved private pipe name");
+    close(*to_client);
+    remove("Gandalf");
     int upstream = open(pipename,O_WRONLY);
     puts("Connection established");
     char* ack = ACK;
@@ -41,7 +43,8 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-    mkfifo("ipepay",0644);
+    char* pid = itoa(getpid());
+    mkfifo(pid,0644);
     if(errno){
         puts("Failure in creating pipe");
         return 0;
