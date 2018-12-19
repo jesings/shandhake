@@ -43,7 +43,8 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-    char* pid = itoa(getpid());
+    char* pid;
+    asprintf(&pid,getpid());
     mkfifo(pid,0644);
     if(errno){
         puts("Failure in creating pipe");
