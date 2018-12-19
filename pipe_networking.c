@@ -11,15 +11,15 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-    mkfifo("Gandalf",0644);
-    if(!errno){
+    if(mkfifo("Gandalf",0644)){
         puts("Failure in creating pipe");
         return 0;
     }
     puts("Server establishing connection to client");
     *to_client = open("Gandalf",O_RDONLY);
+    if(!*to_client) puts("Didn't open pipe correctly");
     char* pipename;
-    read(*to_client,pipename,HANDSHAKE_BUFFER_SIZE);
+    if(read(*to_client,pipename,HANDSHAKE_BUFFER_SIZE)) puts("Didn't read from pipe correctly");
     puts("Server recieved private pipe name");
     int upstream = open(pipename,O_WRONLY);
     puts("Connection established");
@@ -46,10 +46,11 @@ int client_handshake(int *to_server) {
         return 0;
     }
     int wrfd = open("Gandalf",O_WRONLY);
+    if(!wrfd) puts("Didn't open pipe correctly");
     puts("Connection established");
     char* ackbuff = "ipepay";
     puts("Client giving private pipe name to server");
-    write(wrfd,ackbuff,HANDSHAKE_BUFFER_SIZE);
+    if(write(wrfd,ackbuff,HANDSHAKE_BUFFER_SIZE)) puts("Didn't write to pipe correctly");;
     puts("Client establishing a connection with server");
     *to_server =  open("ipepay",O_RDONLY);
     char* ackwait;
