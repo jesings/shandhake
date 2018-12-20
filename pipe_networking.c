@@ -11,6 +11,7 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
+    mkfifo("Gandalf",0644);
     puts("Server establishing connection to client");
     int wkp = open("Gandalf",O_RDONLY);
     char* pipename;
