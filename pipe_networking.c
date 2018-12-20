@@ -11,21 +11,19 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-    if(mkfifo("Gandalf",0644)){
-        puts("Failure in creating pipe");
-        puts(strerror(errno));
-        return 0;
-    }
     puts("Server establishing connection to client");
-    *to_client = open("Gandalf",O_RDONLY);
+    wkp = open("Gandalf",O_RDONLY);
     char* pipename;
-    read(*to_client,pipename,HANDSHAKE_BUFFER_SIZE);
+    read(wkp,pipename,HANDSHAKE_BUFFER_SIZE);
     puts("Server recieved private pipe name");
-    close(*to_client);
-    remove("Gandalf");
+    close(wkp);
     int upstream = open(pipename,O_WRONLY);
+    char pid[10];
+    sprintf(pid,"%d",getpid());
+    mkfifo(pid,0644);
     puts("Connection established");
-    char* ack = ACK;
+    char* ack = pid;
+    open(pid,O_RDONLY);
     puts("Acknowledging having recieved the connection");
     write(upstream,ACK,HANDSHAKE_BUFFER_SIZE);
     return upstream;
@@ -45,19 +43,15 @@ int client_handshake(int *to_server) {
     char pid[10];
     sprintf(pid,"%d",getpid());
     mkfifo(pid,0644);
-    if(errno){
-        puts("Failure in creating pipe");
-        return 0;
-    }
     int wrfd = open("Gandalf",O_WRONLY);
     puts("Connection established");
     char* ackbuff = "ipepay";
     puts("Client giving private pipe name to server");
     write(wrfd,ackbuff,HANDSHAKE_BUFFER_SIZE);
     puts("Client establishing a connection with server");
-    *to_server =  open("ipepay",O_RDONLY);
+    int fromfd = open(pid,O_RDONLY);
     char* ackwait;
-    read(*to_server,ackwait,HANDSHAKE_BUFFER_SIZE);
-    puts("Acknowledgement recieved");
-    return 0;
+    read(fromfd,ackwait,HANDSHAKE_BUFFER_SIZE);
+    *toserver = open(ackwait,O_WRONLY);
+    return fromfd;
 }
