@@ -12,7 +12,7 @@
   =========================*/
 int server_handshake(int *to_client) {
     puts("Server establishing connection to client");
-    wkp = open("Gandalf",O_RDONLY);
+    int wkp = open("Gandalf",O_RDONLY);
     char* pipename;
     read(wkp,pipename,HANDSHAKE_BUFFER_SIZE);
     puts("Server recieved private pipe name");
@@ -52,6 +52,6 @@ int client_handshake(int *to_server) {
     int fromfd = open(pid,O_RDONLY);
     char* ackwait;
     read(fromfd,ackwait,HANDSHAKE_BUFFER_SIZE);
-    *toserver = open(ackwait,O_WRONLY);
+    *to_server = open(ackwait,O_WRONLY);
     return fromfd;
 }
